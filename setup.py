@@ -1,8 +1,9 @@
 import platform
+
 from setuptools import Extension, setup
 
 dir_path = "ctpapi"
-
+runtime_library_dirs = []
 if platform.uname().system == "Windows":
     compiler_flags = [
         "/MP", "/std:c++17",  # standard
@@ -10,6 +11,7 @@ if platform.uname().system == "Windows":
         "/wd4819"  # 936 code page
     ]
     extra_link_args = []
+
 else:
     compiler_flags = [
         "-std=c++17",  # standard
@@ -17,6 +19,7 @@ else:
         "-Wno-delete-incomplete", "-Wno-sign-compare", "-pthread"
     ]
     extra_link_args = ["-lstdc++"]
+    runtime_library_dirs = ["$ORIGIN"]
 
 vnctpmd = Extension(
     # 指定 vnctpmd 的位置
@@ -40,7 +43,7 @@ vnctpmd = Extension(
     extra_compile_args=compiler_flags,
     extra_link_args=extra_link_args,
     depends=[],
-    runtime_library_dirs=["$ORIGIN"],
+    runtime_library_dirs=runtime_library_dirs,
 )
 vnctptd = Extension(
     "ctpapi.ctp.vnctptd",
@@ -57,17 +60,14 @@ vnctptd = Extension(
     libraries=["thostmduserapi_se", "thosttraderapi_se"],
     extra_compile_args=compiler_flags,
     extra_link_args=extra_link_args,
-    runtime_library_dirs=["$ORIGIN"],
+    runtime_library_dirs=runtime_library_dirs,
     depends=[],
     language="cpp",
 )
 
 if platform.system() == "Windows":
-    # use pre-built pyd for windows ( support python 3.7 only )	
-
-    ext_modules = []
-    # if you really want to build it . please check your environment (没测试过)
-    # ext_modules = [vnctptd, vnctpmd]
+    # use pre-built pyd for windows ( support python 3.7 only )
+    ext_modules = [vnctptd, vnctpmd]
 elif platform.system() == "Darwin":
     ext_modules = []
 else:
