@@ -569,6 +569,9 @@ int MdApi::join()
 
 int MdApi::exit()
 {
+	/*
+	ÍË³ö
+	*/
 	this->active = false;
     this->task_queue.terminate();
     this->task_thread.join();

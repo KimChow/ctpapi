@@ -8267,6 +8267,9 @@ int TdApi::join()
 
 int TdApi::exit()
 {
+	/*
+	ÍË³ö
+	*/
     this->active = false;
     this->task_queue.terminate();
     this->task_thread.join();
